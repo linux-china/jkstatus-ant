@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="modjk-status" xmlns:jk="urn:org-apache-jk-status" default="status" basedir=".">
+    <property name="catalina.home" value="/usr/local/tomcat7_idea"/>
+    <property name="jkstatusUrl" value="http://localhost/jkstatus/"/>
+    <property name="m2_repository" value="${user.home}/.m2/repository"/>
+
+    <path id="jkstatus.classpath">
+        <pathelement location="${m2_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+        <pathelement location="${m2_repository}/org/apache/jk/jkstatus-ant/1.2.37/jkstatus-ant-1.2.37.jar"/>
+        <pathelement location="${catalina.home}/bin/tomcat-juli.jar"/>
+        <fileset dir="${catalina.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <typedef resource="org/apache/jk/status/antlib.xml" uri="urn:org-apache-jk-status" classpathref="jkstatus.classpath"/>
+
+    <target name="status" description="Show mod_jk status">
+        <jk:status url="${jkstatusUrl}" resultproperty="worker" echo="on" failOnError="false" worker="worker1"/>
+        <echoproperties prefix="worker"/>
+    </target>
+
+</project>
