@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="modjk-status" xmlns:jk="urn:org-apache-jk-status" default="status" basedir=".">
+
     <property name="catalina.home" value="/usr/local/tomcat7_idea"/>
-    <property name="jkstatusUrl" value="http://localhost/jkstatus/"/>
+    <property name="jkstatus.url" value="http://foobar.com/jkstatus/"/>
+    <property name="jkstatus.username" value="admin"/>
+    <property name="jkstatus.password" value="xxxxx"/>
     <property name="m2_repository" value="${user.home}/.m2/repository"/>
 
     <path id="jkstatus.classpath">
@@ -17,8 +20,28 @@
     <typedef resource="org/apache/jk/status/antlib.xml" uri="urn:org-apache-jk-status" classpathref="jkstatus.classpath"/>
 
     <target name="status" description="Show mod_jk status">
-        <jk:status url="${jkstatusUrl}" resultproperty="worker" echo="on" failOnError="false" worker="worker1"/>
+        <jk:status url="${jkstatus.url}" username="${jkstatus.username}" password="${jkstatus.password}"
+                   echo="on" failOnError="false"
+                   resultproperty="loadbalancer" loadbalancer="loadbalancer"/>
+        <jk:status url="${jkstatus.url}" username="${jkstatus.username}" password="${jkstatus.password}"
+                   echo="on" failOnError="false"
+                   resultproperty="worker" worker="worker1"/>
+        <jk:status url="${jkstatus.url}" username="${jkstatus.username}" password="${jkstatus.password}"
+                   echo="on" failOnError="false"
+                   resultproperty="worker" worker="worker2"/>
+        <echoproperties prefix="loadbalancer"/>
         <echoproperties prefix="worker"/>
     </target>
 
+    <target name="worker1_stop" description="Stop worker1">
+        <jk:updateworker url="${jkstatus.url}" username="${jkstatus.username}" password="${jkstatus.password}"
+                         loadbalancer="loadbalancer" worker="worker1" route="worker1"
+                         activation="Stopped" redirect="" domain="" distance="0"/>
+    </target>
+
+    <target name="worker1_active" description="Active worker1">
+        <jk:updateworker url="${jkstatus.url}" username="${jkstatus.username}" password="${jkstatus.password}"
+                         loadbalancer="loadbalancer" worker="worker1" route="worker1"
+                         activation="Active" redirect="" domain="" distance="0"/>
+    </target>
 </project>
